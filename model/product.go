@@ -20,9 +20,11 @@ func (p *Product) SetProductName(name string) {
 func (p *Product) GetProductCode() string {
 	return p.productCode
 }
-
-func NewProduct(productCode, productName string) *Product {
-	return &Product{
+func (p *Product) GetProductName() string {
+	return p.productName
+}
+func NewProduct(productCode, productName string) Product {
+	return Product{
 		productCode: productCode,
 		productName: productName,
 	}
