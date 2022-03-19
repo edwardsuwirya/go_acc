@@ -2,25 +2,28 @@ package main
 
 import (
 	"enigmacamp.com/goacc/delivery"
-	"enigmacamp.com/goacc/repository"
+	"enigmacamp.com/goacc/manager"
 	"fmt"
 )
 
 func main() {
-	delivery.Login()
-	repo := repository.NewProductRepo()
+	repoManager := manager.NewRepoManager()
+	authRepo := repoManager.UserCredentialRepo()
+	productRepo := repoManager.ProductRepo()
+
+	delivery.Login(authRepo)
 	for {
 		var selectedMenu string
 		fmt.Scanln(&selectedMenu)
 		switch selectedMenu {
 		case "1":
-			delivery.NewProductForm(repo)
+			delivery.NewProductForm(productRepo)
 			break
 		case "2":
-			delivery.ListProductForm(repo)
+			delivery.ListProductForm(productRepo)
 			break
 		case "3":
-			delivery.SearchProductForm(repo)
+			delivery.SearchProductForm(productRepo)
 			break
 		case "4":
 			delivery.ExitApp()
