@@ -11,20 +11,25 @@ type RepoManager interface {
 }
 
 type repoManager struct {
+	productDb []model.Product
+	userDb    []model.UserCredential
 }
 
 func (r *repoManager) ProductRepo() repository.ProductRepo {
-	productDb := make([]model.Product, 0)
-	return repository.NewProductRepo(&productDb)
+	return repository.NewProductRepo(&r.productDb)
 }
 
 func (r *repoManager) UserCredentialRepo() repository.UserCredentialRepo {
-	userDb := []model.UserCredential{
-		model.NewUserCredential("admin", "123"),
-	}
-	return repository.NewUserCredentialRepo(&userDb)
+	return repository.NewUserCredentialRepo(&r.userDb)
 }
 
 func NewRepoManager() RepoManager {
-	return new(repoManager)
+	productDb := make([]model.Product, 0)
+	userDb := []model.UserCredential{
+		model.NewUserCredential("admin", "123"),
+	}
+	return &repoManager{
+		productDb: productDb,
+		userDb:    userDb,
+	}
 }

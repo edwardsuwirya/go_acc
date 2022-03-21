@@ -8,22 +8,22 @@ import (
 
 func main() {
 	repoManager := manager.NewRepoManager()
-	authRepo := repoManager.UserCredentialRepo()
-	productRepo := repoManager.ProductRepo()
+	useCaseManager := manager.NewUseCaseManager(repoManager)
 
-	delivery.Login(authRepo)
+	delivery.Login(useCaseManager.UserLoginUseCase())
+
 	for {
 		var selectedMenu string
 		fmt.Scanln(&selectedMenu)
 		switch selectedMenu {
 		case "1":
-			delivery.NewProductForm(productRepo)
+			delivery.NewProductForm(useCaseManager.ProductRegistrationUseCase())
 			break
 		case "2":
-			delivery.ListProductForm(productRepo)
+			delivery.ListProductForm(useCaseManager.SearchProductUseCase())
 			break
 		case "3":
-			delivery.SearchProductForm(productRepo)
+			delivery.SearchProductForm(useCaseManager.SearchProductUseCase())
 			break
 		case "4":
 			delivery.ExitApp()

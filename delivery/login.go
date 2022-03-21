@@ -2,13 +2,12 @@ package delivery
 
 import (
 	"enigmacamp.com/goacc/delivery/util"
-	"enigmacamp.com/goacc/model"
-	"enigmacamp.com/goacc/repository"
+	"enigmacamp.com/goacc/usecase"
 	"fmt"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func Login(repo repository.UserCredentialRepo) {
+func Login(useCase usecase.AuthenticationUseCase) {
 	var userName string
 	var userPassword string
 	fmt.Print(util.UserNameInput)
@@ -18,7 +17,7 @@ func Login(repo repository.UserCredentialRepo) {
 	if err == nil {
 		userPassword = string(password)
 	}
-	if repo.GetByUserNameAndPassword(model.NewUserCredential(userName, userPassword)) {
+	if useCase.Login(userName, userPassword) {
 		fmt.Println("")
 		MainMenu()
 	} else {

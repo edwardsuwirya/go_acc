@@ -2,12 +2,11 @@ package delivery
 
 import (
 	"enigmacamp.com/goacc/delivery/util"
-	"enigmacamp.com/goacc/model"
-	"enigmacamp.com/goacc/repository"
+	"enigmacamp.com/goacc/usecase"
 	"fmt"
 )
 
-func NewProductForm(repo repository.ProductRepo) {
+func NewProductForm(usecase usecase.ProductRegistrationUseCase) {
 	var productCode string
 	var productName string
 	var saveProductConfirmation string
@@ -20,7 +19,7 @@ func NewProductForm(repo repository.ProductRepo) {
 	fmt.Scanln(&saveProductConfirmation)
 
 	if saveProductConfirmation == "y" {
-		repo.Insert(model.NewProduct(productCode, productName))
+		usecase.Register(productCode, productName)
 	}
 	MainMenu()
 }
