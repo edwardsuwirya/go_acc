@@ -1,14 +1,16 @@
 package repository
 
-import "enigmacamp.com/goacc/model"
+import (
+	"enigmacamp.com/goacc/model"
+)
 
 type userCredentialRepoImpl struct {
-	userCredDb []model.UserCredential
+	userCredDb *[]model.UserCredential
 }
 
 func (u *userCredentialRepoImpl) GetByUserNameAndPassword(user model.UserCredential) (isAuth bool) {
 	isAuth = false
-	for _, u := range u.userCredDb {
+	for _, u := range *u.userCredDb {
 		userName := user.GetUserName()
 		userPassword := user.GetUserPassword()
 		if userName == u.GetUserName() && userPassword == u.GetUserPassword() {
@@ -19,11 +21,8 @@ func (u *userCredentialRepoImpl) GetByUserNameAndPassword(user model.UserCredent
 	return
 }
 
-func NewUserCredentialRepo() UserCredentialRepo {
-	userDb := []model.UserCredential{
-		model.NewUserCredential("admin", "123"),
-	}
+func NewUserCredentialRepo(userCredDb *[]model.UserCredential) UserCredentialRepo {
 	return &userCredentialRepoImpl{
-		userDb,
+		userCredDb,
 	}
 }

@@ -3,16 +3,16 @@ package repository
 import "enigmacamp.com/goacc/model"
 
 type productRepoImpl struct {
-	productDb []model.Product
+	productDb *[]model.Product
 }
 
 func (p *productRepoImpl) Insert(newProduct model.Product) {
-	p.productDb = append(p.productDb, newProduct)
+	*p.productDb = append(*p.productDb, newProduct)
 }
 
 func (p *productRepoImpl) GetByProductCode(productCode string) model.Product {
 	var selectedProduct model.Product
-	for _, product := range p.productDb {
+	for _, product := range *p.productDb {
 		pc := product.GetProductCode()
 		if pc == productCode {
 			selectedProduct = product
@@ -23,11 +23,12 @@ func (p *productRepoImpl) GetByProductCode(productCode string) model.Product {
 }
 
 func (p *productRepoImpl) GetAll() []model.Product {
-	return p.productDb
+	return *p.productDb
 }
 
-func NewProductRepo() ProductRepo {
-	//productDb := make([]model.Product, 0)
-	productRepo := new(productRepoImpl)
-	return productRepo
+func NewProductRepo(productDb *[]model.Product) ProductRepo {
+	productRepo := productRepoImpl{
+		productDb: productDb,
+	}
+	return &productRepo
 }
