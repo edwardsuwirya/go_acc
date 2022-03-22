@@ -17,10 +17,10 @@ func Login(useCase usecase.AuthenticationUseCase) {
 	if err == nil {
 		userPassword = string(password)
 	}
-	if useCase.Login(userName, userPassword) {
+	if err := useCase.Login(userName, userPassword); err != nil {
+		ExitApp()
+	} else {
 		fmt.Println("")
 		MainMenu()
-	} else {
-		ExitApp()
 	}
 }
