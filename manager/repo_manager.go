@@ -1,7 +1,6 @@
 package manager
 
 import (
-	"enigmacamp.com/goacc/model"
 	"enigmacamp.com/goacc/repository"
 )
 
@@ -11,25 +10,19 @@ type RepoManager interface {
 }
 
 type repoManager struct {
-	productDb []model.Product
-	userDb    []model.UserCredential
+	infra Infra
 }
 
 func (r *repoManager) ProductRepo() repository.ProductRepo {
-	return repository.NewProductRepo(&r.productDb)
+	return repository.NewProductRepo(r.infra.SqlDb())
 }
 
 func (r *repoManager) UserCredentialRepo() repository.UserCredentialRepo {
-	return repository.NewUserCredentialRepo(&r.userDb)
+	return repository.NewUserCredentialRepo(r.infra.SqlDb())
 }
 
-func NewRepoManager() RepoManager {
-	productDb := make([]model.Product, 0)
-	userDb := []model.UserCredential{
-		model.NewUserCredential("admin", "123"),
-	}
+func NewRepoManager(infra Infra) RepoManager {
 	return &repoManager{
-		productDb: productDb,
-		userDb:    userDb,
+		infra: infra,
 	}
 }
