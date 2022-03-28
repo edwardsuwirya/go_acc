@@ -1,16 +1,29 @@
 package repository
 
 import (
+	"enigmacamp.com/goacc/logger"
 	"enigmacamp.com/goacc/model"
+	"enigmacamp.com/goacc/utils"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type productRepoImpl struct {
 	productDb *sqlx.DB
 }
 
-func (p *productRepoImpl) Insert(newProduct model.Product) {
-	//*p.productDb = append(*p.productDb, newProduct)
+func (p *productRepoImpl) Insert(newProduct model.Product) (model.Product, error) {
+	id := utils.GetUuid()
+	newProduct.Id = id
+	timestamp := time.Now()
+	_, err := p.productDb.Exec("insertsss into m_product(id,product_code,product_name,category_id,created_at,updated_at) "+
+		"values ($1,$2,$3,$4,$5,$6)",
+		id, newProduct.ProductCode, newProduct.ProductName, newProduct.CategoryId, timestamp, timestamp)
+	if err != nil {
+		logger.Log.Error().Err(err).Str("service", "db-product-insert").Msg("Insert product failed")
+		return model.Product{}, err
+	}
+	return newProduct, nil
 }
 
 func (p *productRepoImpl) GetByProductCode(productCode string) model.Product {

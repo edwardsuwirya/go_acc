@@ -1,4 +1,4 @@
-package delivery
+package cli
 
 import (
 	"enigmacamp.com/goacc/delivery/util"
@@ -10,7 +10,7 @@ func ListProductForm(useCase usecase.SearchProductUseCase) {
 	util.CreateHeader(util.ListProductFormHeader)
 	util.CreateHeaderTable()
 	for idx, product := range useCase.Search("") {
-		fmt.Printf(util.ProductListTableFormat, idx+1, product.GetProductCode(), product.GetProductName())
+		fmt.Printf(util.ProductListTableFormat, idx+1, product.ProductCode, product.ProductName)
 	}
 	ExitToMain()
 }

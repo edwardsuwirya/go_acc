@@ -1,4 +1,4 @@
-package delivery
+package cli
 
 import (
 	"enigmacamp.com/goacc/delivery/util"
@@ -16,7 +16,7 @@ func SearchProductForm(useCase usecase.SearchProductUseCase) {
 	if product != nil {
 		util.CreateHeaderTable()
 		p := product[0]
-		fmt.Printf(util.ProductListTableFormat, 1, p.GetProductCode(), p.GetProductName())
+		fmt.Printf(util.ProductListTableFormat, 1, p.ProductCode, p.ProductName)
 	} else {
 		fmt.Println("Produk tidak ditemukan")
 	}

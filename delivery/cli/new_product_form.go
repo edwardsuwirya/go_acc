@@ -1,4 +1,4 @@
-package delivery
+package cli
 
 import (
 	"enigmacamp.com/goacc/delivery/util"
@@ -19,7 +19,7 @@ func NewProductForm(usecase usecase.ProductRegistrationUseCase) {
 	fmt.Scanln(&saveProductConfirmation)
 
 	if saveProductConfirmation == "y" {
-		usecase.Register(productCode, productName)
+		usecase.Register(productCode, productName, "")
 	}
 	MainMenu()
 }

@@ -18,7 +18,7 @@ func (a *searchProductUseCase) Search(productCode string) []model.Product {
 		return a.repo.GetAll()
 	}
 	result := a.repo.GetByProductCode(productCode)
-	if len(result.GetProductCode()) == 0 {
+	if len(result.ProductCode) == 0 {
 		return nil
 	} else {
 		return []model.Product{result}

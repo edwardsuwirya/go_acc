@@ -6,17 +6,16 @@ import (
 )
 
 type ProductRegistrationUseCase interface {
-	Register(productCode, productName string) model.Product
+	Register(productCode, productName, categoryId string) (model.Product, error)
 }
 
 type productRegistrationUseCase struct {
 	repo repository.ProductRepo
 }
 
-func (a *productRegistrationUseCase) Register(productCode, productName string) model.Product {
-	newProduct := model.NewProduct(productCode, productName)
-	a.repo.Insert(newProduct)
-	return newProduct
+func (a *productRegistrationUseCase) Register(productCode, productName, categoryId string) (model.Product, error) {
+	newProduct := model.NewProduct(productCode, productName, categoryId)
+	return a.repo.Insert(newProduct)
 }
 
 func NewProductRegistrationUseCase(repo repository.ProductRepo) ProductRegistrationUseCase {
