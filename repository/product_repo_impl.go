@@ -16,7 +16,7 @@ func (p *productRepoImpl) Insert(newProduct model.Product) (model.Product, error
 	id := utils.GetUuid()
 	newProduct.Id = id
 	timestamp := time.Now()
-	_, err := p.productDb.Exec("insertsss into m_product(id,product_code,product_name,category_id,created_at,updated_at) "+
+	_, err := p.productDb.Exec("insert into m_product(id,product_code,product_name,category_id,created_at,updated_at) "+
 		"values ($1,$2,$3,$4,$5,$6)",
 		id, newProduct.ProductCode, newProduct.ProductName, newProduct.CategoryId, timestamp, timestamp)
 	if err != nil {

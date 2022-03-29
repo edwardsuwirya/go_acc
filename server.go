@@ -5,6 +5,7 @@ import (
 	"enigmacamp.com/goacc/delivery/api"
 	"enigmacamp.com/goacc/delivery/middleware"
 	"enigmacamp.com/goacc/logger"
+	"enigmacamp.com/goacc/manager"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,8 +14,11 @@ type AppServer interface {
 }
 
 type appServer struct {
-	routerEngine *gin.Engine
-	cfg          config.Config
+	routerEngine   *gin.Engine
+	InfraManager   manager.Infra
+	RepoManager    manager.RepoManager
+	UseCaseManager manager.UseCaseManager
+	cfg            config.Config
 }
 
 func (p *appServer) initHandlers() {
@@ -24,7 +28,7 @@ func (p *appServer) initHandlers() {
 
 func (p *appServer) v1() {
 	productApiGroup := p.routerEngine.Group("/product")
-	api.NewProductApi(productApiGroup, p.cfg.UseCaseManager.ProductRegistrationUseCase())
+	api.NewProductApi(productApiGroup, p.UseCaseManager.ProductRegistrationUseCase())
 }
 
 func (p *appServer) Run() {
@@ -42,10 +46,16 @@ func Server() AppServer {
 	//r := gin.New()
 	//r.Use(gin.Recovery())
 	r := gin.Default()
-
 	c := config.NewConfig(".", "config")
+	infraManager := manager.NewInfra(c)
+	repoManager := manager.NewRepoManager(infraManager)
+	useCaseManager := manager.NewUseCaseManager(repoManager)
+
 	return &appServer{
-		routerEngine: r,
-		cfg:          c,
+		routerEngine:   r,
+		InfraManager:   infraManager,
+		RepoManager:    repoManager,
+		UseCaseManager: useCaseManager,
+		cfg:            c,
 	}
 }

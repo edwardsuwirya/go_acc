@@ -1,30 +1,49 @@
 package repository
 
 import (
-	"enigmacamp.com/goacc/model"
+	"bytes"
+	"encoding/json"
+	"enigmacamp.com/goacc/delivery/appreq"
+	"enigmacamp.com/goacc/delivery/commonresp"
 	"enigmacamp.com/goacc/utils"
 	"errors"
-	"github.com/jmoiron/sqlx"
 )
 
 type userCredentialRepoImpl struct {
-	userCredDb *sqlx.DB
+	intraClient *utils.IntraClient
 }
 
-func (u *userCredentialRepoImpl) GetByUserNameAndPassword(user model.UserCredential) error {
-	var isUserExist int
-	err := u.userCredDb.Get(&isUserExist, "select count(id) from user_credentials where user_name=$1 and user_password=$2 and is_blocked=$3", user.GetUserName(), user.GetUserPassword(), false)
+func (u *userCredentialRepoImpl) GetByUserNameAndPassword(user appreq.AuthRequest) error {
+	//var isUserExist int
+	//err := u.userCredDb.Get(&isUserExist, "select count(id) from user_credentials where user_name=$1 and user_password=$2 and is_blocked=$3", user.GetUserName(), user.GetUserPassword(), false)
+	//if err != nil {
+	//	return errors.New(err.Error())
+	//}
+	//if isUserExist == 0 {
+	//	return utils.DataNotFoundError()
+	//}
+	//return nil
+	postBody, _ := json.Marshal(user)
+	requestBody := bytes.NewBuffer(postBody)
+	response, err := u.intraClient.IntraPost("http://localhost:3334/auth", requestBody)
 	if err != nil {
 		return errors.New(err.Error())
 	}
-	if isUserExist == 0 {
-		return utils.DataNotFoundError()
+	resp := commonresp.ResponseMessage{}
+	err = json.NewDecoder(response.Body).Decode(&resp)
+	if err != nil {
+		return err
+	}
+	//if response.StatusCode == http.StatusOK {}
+	if resp.Status != "Success" {
+		return utils.UnauthorizedError()
 	}
 	return nil
+
 }
 
-func NewUserCredentialRepo(db *sqlx.DB) UserCredentialRepo {
+func NewUserCredentialRepo(intraClient *utils.IntraClient) UserCredentialRepo {
 	return &userCredentialRepoImpl{
-		db,
+		intraClient: intraClient,
 	}
 }

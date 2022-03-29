@@ -18,7 +18,7 @@ func (r *repoManager) ProductRepo() repository.ProductRepo {
 }
 
 func (r *repoManager) UserCredentialRepo() repository.UserCredentialRepo {
-	return repository.NewUserCredentialRepo(r.infra.SqlDb())
+	return repository.NewUserCredentialRepo(r.infra.IntraClient())
 }
 
 func NewRepoManager(infra Infra) RepoManager {

@@ -2,8 +2,6 @@ package config
 
 import (
 	"enigmacamp.com/goacc/logger"
-	"enigmacamp.com/goacc/manager"
-	"fmt"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/spf13/viper"
 )
@@ -19,14 +17,8 @@ type DbConfig struct {
 	User     string
 	Password string
 }
-type Manager struct {
-	InfraManager   manager.Infra
-	RepoManager    manager.RepoManager
-	UseCaseManager manager.UseCaseManager
-}
 
 type Config struct {
-	Manager
 	ApiConfig
 	DbConfig
 	LogLevel string
@@ -59,11 +51,6 @@ func NewConfig(path string, configFileName string) Config {
 	cfg = cfg.readConfigFile(path, configFileName)
 
 	logger.New(cfg.LogLevel)
-	dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", cfg.DbConfig.User, cfg.DbConfig.Password, cfg.DbConfig.Host, cfg.DbConfig.Port, cfg.DbConfig.Name)
-
-	cfg.InfraManager = manager.NewInfra(dataSourceName)
-	cfg.RepoManager = manager.NewRepoManager(cfg.InfraManager)
-	cfg.UseCaseManager = manager.NewUseCaseManager(cfg.RepoManager)
 
 	return cfg
 }

@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"enigmacamp.com/goacc/model"
+	"enigmacamp.com/goacc/delivery/appreq"
 	"enigmacamp.com/goacc/repository"
 	"enigmacamp.com/goacc/utils"
 )
@@ -15,7 +15,7 @@ type authenticationUseCase struct {
 }
 
 func (a *authenticationUseCase) Login(userName string, userPassword string) error {
-	userAuth := model.NewUserCredential(userName, userPassword)
+	userAuth := appreq.AuthRequest{UserName: userName, Password: userPassword}
 	if err := a.repo.GetByUserNameAndPassword(userAuth); err != nil {
 		return utils.UnauthorizedError()
 	}
