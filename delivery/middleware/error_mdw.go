@@ -1,12 +1,10 @@
 package middleware
 
 import (
-	"encoding/json"
 	"enigmacamp.com/goacc/delivery/commonresp"
 	"enigmacamp.com/goacc/logger"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func ErrorMiddleware() gin.HandlerFunc {
@@ -17,20 +15,7 @@ func ErrorMiddleware() gin.HandlerFunc {
 			return
 		}
 		e := detectedError.Error()
-		errResp := commonresp.ErrorMessage{}
-		err := json.Unmarshal([]byte(e), &errResp)
-		if err != nil {
-			errResp.HttpCode = http.StatusInternalServerError
-			errResp.ErrorDescription = commonresp.ErrorDescription{
-				Status:       "Error",
-				ResponseCode: "06",
-				Description:  "Convert Json Failed",
-			}
-			logger.Log.Error().Err(err).Msg(errResp.Description)
-		} else {
-			logger.Log.Error().Err(fmt.Errorf("%d", errResp.HttpCode)).Str("service", errResp.Service).Str("code", errResp.ResponseCode).Msg(errResp.Description)
-		}
-
-		commonresp.NewJsonResponse(c).SendError(errResp)
+		logger.Log.Error().Err(fmt.Errorf("%v", e)).Msg("User Error")
+		commonresp.NewErrorJsonResponse(c, detectedError).Send()
 	}
 }
