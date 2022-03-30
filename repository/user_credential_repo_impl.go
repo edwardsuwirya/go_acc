@@ -29,13 +29,13 @@ func (u *userCredentialRepoImpl) GetByUserNameAndPassword(user appreq.AuthReques
 	if err != nil {
 		return errors.New(err.Error())
 	}
-	resp := commonresp.ResponseMessage{}
+	resp := commonresp.ApiResponse{}
 	err = json.NewDecoder(response.Body).Decode(&resp)
 	if err != nil {
 		return err
 	}
 	//if response.StatusCode == http.StatusOK {}
-	if resp.Status != "Success" {
+	if resp.ResponseCode != "00" {
 		return utils.UnauthorizedError()
 	}
 	return nil
