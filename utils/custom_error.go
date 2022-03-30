@@ -1,34 +1,37 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
+	"net/http"
 )
 
 type AppError struct {
-	ErrorCode string
-	Err       error
+	ErrorCode    string
+	ErrorMessage string
+	ErrorType    int
 }
 
 func (e *AppError) Error() string {
-	return fmt.Sprintf("code : %s, err : %s", e.ErrorCode, e.Err)
+	return fmt.Sprintf("type: %d, code:%s, err:%s", e.ErrorType, e.ErrorCode, e.ErrorMessage)
 }
 
 func RequiredError() error {
 	return &AppError{
-		ErrorCode: "X01",
-		Err:       errors.New("Input cant be empty"),
+		ErrorCode:    "X01",
+		ErrorMessage: "Input cant be empty",
+		ErrorType:    http.StatusBadRequest,
 	}
 }
 func UnauthorizedError() error {
 	return &AppError{
-		ErrorCode: "X04",
-		Err:       errors.New("Unauthorized user"),
+		ErrorCode:    "X04",
+		ErrorMessage: "Unauthorized user",
+		ErrorType:    http.StatusUnauthorized,
 	}
 }
 func DataNotFoundError() error {
 	return &AppError{
-		ErrorCode: "X02",
-		Err:       errors.New("No Data Found"),
+		ErrorCode:    "X02",
+		ErrorMessage: "No Data Found",
 	}
 }

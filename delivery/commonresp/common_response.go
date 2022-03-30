@@ -1,51 +1,63 @@
 package commonresp
 
-import "encoding/json"
+import (
+	"enigmacamp.com/goacc/utils"
+	"errors"
+	"net/http"
+)
+
+const (
+	SuccessCode         = "00"
+	SuccessMessage      = "Success"
+	DefaultErrorCode    = "XX"
+	DefaultErrorMessage = "Something went wrong"
+)
 
 type AppHttpResponse interface {
-	SendData(message ResponseMessage)
-	SendError(errMessage ErrorMessage)
+	Send()
+	Get() (int, ApiResponse)
 }
 
-type ResponseMessage struct {
-	Status       string      `json:"status"`
-	ResponseCode string      `json:"response_code"`
-	Description  string      `json:"description"`
-	Data         interface{} `json:"data"`
+type Status struct {
+	ResponseCode    string `json:"response_code"`
+	ResponseMessage string `json:"response_message"`
 }
 
-type ErrorMessage struct {
-	HttpCode int `json:"http_code"`
-	ErrorDescription
+type ApiResponse struct {
+	Status
+	Data interface{} `json:"data,omitempty"`
 }
 
-type ErrorDescription struct {
-	Status       string `json:"status"`
-	Service      string `json:"service"`
-	ResponseCode string `json:"response_code"`
-	Description  string `json:"description"`
-}
-
-func (e ErrorMessage) ToJson() string {
-	b, err := json.Marshal(e)
-	if err != nil {
-		return ""
+func NewSuccessMessage(data interface{}) (httpStatusCode int, apiResponse ApiResponse) {
+	status := Status{
+		ResponseCode:    SuccessCode,
+		ResponseMessage: SuccessMessage,
 	}
-	return string(b)
+	httpStatusCode = http.StatusOK
+	apiResponse = ApiResponse{
+		status, data,
+	}
+	return
 }
+func NewErrorMessage(err error) (httpStatusCode int, apiResponse ApiResponse) {
+	var userError *utils.AppError
+	var status Status
+	if errors.As(err, &userError) {
+		status = Status{
+			ResponseCode:    userError.ErrorCode,
+			ResponseMessage: userError.ErrorMessage,
+		}
+		httpStatusCode = userError.ErrorType
+	} else {
+		status = Status{
+			ResponseCode:    DefaultErrorCode,
+			ResponseMessage: DefaultErrorMessage,
+		}
+		httpStatusCode = http.StatusInternalServerError
+	}
+	apiResponse = ApiResponse{
+		status, nil,
+	}
 
-func NewResponseMessage(respCode string, description string, data interface{}) ResponseMessage {
-	return ResponseMessage{
-		"Success", respCode, description, data,
-	}
-}
-func NewErrorMessage(httpCode int, service, respCode, description string) ErrorMessage {
-	return ErrorMessage{
-		httpCode, ErrorDescription{
-			Status:       "Error",
-			Service:      service,
-			ResponseCode: respCode,
-			Description:  description,
-		},
-	}
+	return
 }
